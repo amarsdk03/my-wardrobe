@@ -25,8 +25,10 @@ export default function FiltersAccordion(
             defaultValue="filters"
         >
             <AccordionItem value="filters">
-                <AccordionContent className="flex flex-col gap-4 text-balance">
-                    Filters here
+                <AccordionContent>
+                    <div className={"rounded-md border-stone-200 opacity-80 text-stone-600 border-2 p-2 text-center"}>
+                        Filters coming soon...
+                    </div>
                 </AccordionContent>
             </AccordionItem>
         </Accordion>

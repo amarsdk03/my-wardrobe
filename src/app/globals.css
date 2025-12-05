@@ -121,12 +121,31 @@
 }
 
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+body::-webkit-scrollbar {
+    display: none;
+}
+
+.apiScroll::-webkit-scrollbar {
+    display: none;
+}
+
 body {
     background-color: var(--color-stone-100);
 }
 
-.home-hero {
+.home-title {
     width: min(100vw, 500px);
     margin-top: min(20vw, 80px);
     padding: 0 30px 15px;
+}
+
+.home-search {
+    width: min(100vw, 500px);
+    padding: 0 30px 15px;
+}
+
+.add-item-dialog {
+    width: min(90vw, 900px);
+    max-width: 900px;
 }

@@ -1,4 +1,6 @@
 export function estimateLocalStorageUsage() {
+    if (typeof window === 'undefined') return 0;
+
     let total = 0;
 
     for (const key in localStorage) {
