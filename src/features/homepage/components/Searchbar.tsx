@@ -3,21 +3,18 @@
 import React from "react";
 import {ListFilterIcon} from "lucide-react";
 
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-} from "@/components/ui/accordion"
-import { Field } from "@/components/ui/field"
-import { Button } from "@/components/ui/button";
+import FiltersAccordion from "@/features/homepage/components/Filters";
+import SettingsDialog from "@/features/settings/components/SettingsDialog";
+
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button";
 
 export default function Searchbar() {
     const [showFilters, setShowFilters] = React.useState("");
 
     return (
-        <Field className={"max-w-full"}>
-            <div className={"flex gap-2"}>
+        <div className={"max-w-full mt-4"}>
+            <div className={"flex gap-1"}>
                 <Input
                     id="product-search"
                     type="text"
@@ -31,21 +28,14 @@ export default function Searchbar() {
                 >
                     <ListFilterIcon />
                 </Button>
+                <SettingsDialog />
             </div>
-            <Accordion
-                value={showFilters}
-                onValueChange={setShowFilters}
-                type="single"
-                collapsible
-                className="w-full"
-                defaultValue="filters"
-            >
-                <AccordionItem value="filters">
-                    <AccordionContent className="flex flex-col gap-4 text-balance">
-                        Filters here
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
-        </Field>
+            <div className={"px-0.5 mt-2"}>
+                <FiltersAccordion
+                    showFilters={showFilters}
+                    setShowFilters={setShowFilters}
+                />
+            </div>
+        </div>
     )
 }
