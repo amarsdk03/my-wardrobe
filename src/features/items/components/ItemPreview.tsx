@@ -30,7 +30,7 @@ export default function ItemPreview(
                                 <div className="absolute top-0 left-0 ps-2 pt-2 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     <Badge
                                         variant="secondary"
-                                        className="bg-yellow-300 text-dark"
+                                        className="bg-yellow-300 text-black"
                                     >
                                         <StarIcon />
                                         Wishlist
@@ -40,9 +40,24 @@ export default function ItemPreview(
                         }
                     </>
                 ) : (
-                    <div className="flex items-center justify-center text-center w-full h-full">
-                        {item.name}
-                    </div>
+                    <>
+                        <div className="flex items-center justify-center text-center dark:text-stone-600 w-full h-full">
+                            {item.name}
+                        </div>
+                        {
+                            item.wishlist && (
+                                <div className="absolute top-0 left-0 ps-2 pt-2 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <Badge
+                                        variant="secondary"
+                                        className="bg-yellow-300 text-black"
+                                    >
+                                        <StarIcon />
+                                        Wishlist
+                                    </Badge>
+                                </div>
+                            )
+                        }
+                    </>
                 )
             }
         </div>

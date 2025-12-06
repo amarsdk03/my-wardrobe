@@ -93,21 +93,21 @@ export default function ItemGrid(
     if (formData.wardrobe.length === 0) {
         return (
             <div className="mt-18">
-                <p className="text-2xl text-stone-500 text-center font-medium">
+                <p className="text-2xl text-stone-500 dark:text-stone-400 text-center font-medium">
                     No items added to your wardrobe yet.
                 </p>
-                <p className="text-xl text-stone-500 text-center">
-                    Click the <span className={"text-amber-700 text-semibold"}>yellow +</span> to add your first item!
+                <p className="text-xl text-stone-500 dark:text-stone-400 text-center">
+                    Click the <span className={"text-yellow-500 font-semibold"}>yellow +</span> button to add your first item!
                 </p>
             </div>
         )
     } else if (filteredWardrobe.length === 0) {
         return (
             <div className="mt-18">
-                <p className="text-2xl text-stone-500 text-center font-medium">
+                <p className="text-2xl text-stone-500 dark:text-stone-400 text-center font-medium">
                     No result matching your search.
                 </p>
-                <p className="text-xl text-stone-500 text-center">
+                <p className="text-xl text-stone-500 dark:text-stone-400 text-center">
                     Try changing the filters or search query.
                 </p>
             </div>
