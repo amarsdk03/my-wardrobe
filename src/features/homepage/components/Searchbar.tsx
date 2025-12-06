@@ -10,7 +10,15 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-export default function Searchbar() {
+export default function Searchbar(
+    {
+        searchQuery,
+        searchQueryAction,
+    } : {
+        searchQuery: string,
+        searchQueryAction: (value: string) => void,
+    }
+) {
     const [showFilters, setShowFilters] = React.useState("");
 
     return (
@@ -20,6 +28,8 @@ export default function Searchbar() {
                     id="product-search"
                     type="text"
                     placeholder="Search here..."
+                    value={searchQuery}
+                    onChange={(e) => searchQueryAction(e.target.value)}
                 />
                 <Separator orientation="vertical" className={"mx-1"} />
                 <Button

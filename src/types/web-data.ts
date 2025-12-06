@@ -15,6 +15,7 @@ export interface userSettings {
     language: Language;
     gridSize: gridSize;
     gridType: gridType;
+    darkMode: boolean;
     showItemNames: boolean;
     showItemCategories: boolean;
     showItemPrices: boolean;

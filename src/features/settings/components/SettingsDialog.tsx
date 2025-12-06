@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import {Button} from "@/components/ui/button";
+import CustomizeAppearance from "@/features/settings/components/CustomizeAppearance";
 
 export default function SettingsDialog() {
     const [showSettings, setShowSettings] = React.useState(false);
@@ -32,13 +33,30 @@ export default function SettingsDialog() {
                 open={showSettings}
                 onOpenChange={setShowSettings}
             >
-                <AlertDialogContent>
+                <AlertDialogContent aria-describedby={"settings-dialog"}>
                     <AlertDialogHeader>
                         <AlertDialogTitle>
                             Settings & info
                         </AlertDialogTitle>
                     </AlertDialogHeader>
+                    <div className={"mt-2"}>
+                        <h4 className="text-xl font-medium mb-1">
+                            User settings
+                        </h4>
+                        <p className="text-sm">
+                            Coming soon...
+                        </p>
+                    </div>
+                    <CustomizeAppearance />
                     <MemoryUsage />
+                    <div className={"mt-2"}>
+                        <h4 className="text-xl font-medium mb-1">
+                            Backup/Load
+                        </h4>
+                        <p className="text-sm">
+                            Coming soon...
+                        </p>
+                    </div>
                     <AlertDialogFooter>
                         <AlertDialogCancel>
                             Discard

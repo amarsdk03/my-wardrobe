@@ -14,8 +14,8 @@ export type webDataStore = {
     exportWardrobe: () => webData;
 
     addNewItemToWardrobe: (item: Item) => void;
-    updateItemInWardrobe: (index: number, item: Item) => void;
-    deleteItemFromWardrobe: (index: number) => void;
+    updateItemInWardrobe: (item: Item) => void;
+    deleteItemFromWardrobe: (index: string) => void;
 }
 
 const STORAGE_KEY = "digital-wardrobe-data";
@@ -25,6 +25,7 @@ const defaultWebData: webData = {
         language: { code: "en", name: "English" },
         gridSize: "S",
         gridType: "none",
+        darkMode: false,
         showItemNames: false,
         showItemCategories: false,
         showItemPrices: false,
@@ -129,12 +130,11 @@ export const useWebDataStore = create<webDataStore>()((set, get) => ({
             return { formData: newData };
         }),
 
-    updateItemInWardrobe: (index, item) =>
+    updateItemInWardrobe: (item) =>
         set((state) => {
-            const newWardrobe = [...state.formData.wardrobe];
-            if (index >= 0 && index < newWardrobe.length) {
-                newWardrobe[index] = item;
-            }
+            const newWardrobe = state.formData.wardrobe.map((wardrobeItem) =>
+                wardrobeItem.id === item.id ? { ...item } : wardrobeItem
+            );
             const newData = {
                 ...state.formData,
                 wardrobe: newWardrobe,
@@ -143,9 +143,9 @@ export const useWebDataStore = create<webDataStore>()((set, get) => ({
             return { formData: newData };
         }),
 
-    deleteItemFromWardrobe: (index) =>
+    deleteItemFromWardrobe: (id) =>
         set((state) => {
-            const newWardrobe = state.formData.wardrobe.filter((_, i) => i !== index);
+            const newWardrobe = state.formData.wardrobe.filter((item) => item.id !== id);
             const newData = {
                 ...state.formData,
                 wardrobe: newWardrobe,

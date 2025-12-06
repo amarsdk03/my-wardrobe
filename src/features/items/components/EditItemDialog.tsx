@@ -1,5 +1,7 @@
 import React from "react";
-import {CheckIcon, PlusIcon} from "lucide-react";
+
+import { useWebDataStore } from "@/stores/web-data-store";
+import {CheckIcon, Trash2Icon} from "lucide-react";
 
 import Item, {
     CATEGORIES,
@@ -7,9 +9,9 @@ import Item, {
     CONDITIONS,
     conditionTypes,
     NECESSITY,
-    necessityTypes
+    necessityTypes,
+    sizeTypes
 } from "@/types/wardrobe-data";
-import { useWebDataStore } from "@/stores/web-data-store";
 
 import {
     AlertDialog,
@@ -18,6 +20,15 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 import {
     Field,
@@ -42,54 +53,66 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group";
+import ItemPreview from "@/features/items/components/ItemPreview";
 
-export default function AddItemDialog() {
-    const { addNewItemToWardrobe } = useWebDataStore();
+export default function EditItemDialog(
+    {
+        item,
+    } : {
+        item: Item,
+    }
+) {
+    const { updateItemInWardrobe, deleteItemFromWardrobe } = useWebDataStore();
 
     const [dialogOpen, setDialogOpen] = React.useState(false);
 
-    const [itemTitle, setItemTitle] = React.useState("");
-    const [itemImageUrl, setItemImageUrl] = React.useState("");
-    const [itemCategory, setItemCategory] = React.useState<categoryTypes[]>(["Others"]);
-    const [itemPrice, setItemPrice] = React.useState("");
-    const [itemCondition, setItemCondition] = React.useState("New");
-    const [itemNecessity, setItemNecessity] = React.useState("5");
-    const [itemInfo, setItemInfo] = React.useState("");
-    const [wishlist, setWishlist] = React.useState(false);
+    const [itemTitle, setItemTitle] = React.useState(item.name);
+    const [itemInfo, setItemInfo] = React.useState(item.info);
+    const [itemImageUrl, setItemImageUrl] = React.useState(item.images[0] || "");
+    const [itemCategory, setItemCategory] = React.useState<categoryTypes[]>(item.category);
+    const [itemPrice, setItemPrice] = React.useState(item.price?.toString() || "");
+    const [itemCondition, setItemCondition] = React.useState<conditionTypes | "">(item.condition || "");
+    const [itemSize, setItemSize] = React.useState<sizeTypes | "">(item.size || "");
+    const [itemNecessity, setItemNecessity] = React.useState(item.necessity?.toString() || "");
+    const [wishlist, setWishlist] = React.useState(item.wishlist);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
 
-        const newItem: Item = {
-            id: crypto.randomUUID(),
+        const updatedItem: Item = {
+            id: item.id,
             name: itemTitle,
             images: itemImageUrl ? [itemImageUrl] : [],
             info: itemInfo,
             wishlist: wishlist,
             category: itemCategory,
             price: itemPrice ? parseFloat(itemPrice) : undefined,
-            condition: itemCondition as conditionTypes || undefined,
+            condition: itemCondition || undefined,
+            size: itemSize || undefined,
             necessity: itemNecessity.toString() as unknown as necessityTypes || undefined,
         };
 
-        addNewItemToWardrobe(newItem);
+        updateItemInWardrobe(updatedItem);
         setDialogOpen(false);
-    };
+    }
+
+    function handleDeleteItem() {
+        setDialogOpen(false);
+        deleteItemFromWardrobe(item.id);
+    }
 
     return (
         <AlertDialog
             open={dialogOpen}
             onOpenChange={setDialogOpen}
         >
-            <AlertDialogTrigger asChild>
-                <Button size="icon">
-                    <PlusIcon />
-                </Button>
+            <AlertDialogTrigger>
+                <ItemPreview item={item} />
             </AlertDialogTrigger>
-            <AlertDialogContent className={"item-dialog"} aria-describedby={"add-item-dialog"}>
+            <AlertDialogContent className={"item-dialog"} aria-describedby={"edit-item-dialog"}>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Add new item
+                        Update item
                     </AlertDialogTitle>
                 </AlertDialogHeader>
                 <form onSubmit={handleSubmit}>
@@ -115,7 +138,7 @@ export default function AddItemDialog() {
                                         Required info
                                     </FieldLegend>
                                     <FieldDescription>
-                                        The following fields are required to add a new item to your wardrobe.
+                                        The following fields are required to update the item to your wardrobe.
                                     </FieldDescription>
                                     <FieldGroup className={"gap-5"}>
                                         <Field className={"gap-2"}>
@@ -207,7 +230,7 @@ export default function AddItemDialog() {
                                                 </FieldLabel>
                                                 <Select
                                                     value={itemCondition}
-                                                    onValueChange={setItemCondition}
+                                                    onValueChange={(value) => setItemCondition(value as conditionTypes | "")}
                                                 >
                                                     <SelectTrigger id="conditions">
                                                         <SelectValue placeholder="Select a condition" />
@@ -279,19 +302,53 @@ export default function AddItemDialog() {
                             </FieldGroup>
                         </ScrollArea>
                     </div>
-                    <Field orientation="horizontal" className={"justify-end mt-4"}>
-                        <Button
-                            variant="outline"
-                            type="button"
-                            onClick={() => setDialogOpen(false)}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            type="submit"
-                        >
-                            Submit
-                        </Button>
+                    <Field orientation="horizontal" className={"flex flex-col sm:flex-row justify-between"}>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button
+                                    variant="destructive"
+                                    type="button"
+                                    className="w-full sm:w-auto"
+                                >
+                                    <Trash2Icon />
+                                    Delete item
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>
+                                        Are you absolutely sure?
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                        This action cannot be undone!
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <Button
+                                    variant="destructive"
+                                    type="button"
+                                    onClick={handleDeleteItem}
+                                >
+                                    <Trash2Icon />
+                                    Confirm deletion
+                                </Button>
+                            </DialogContent>
+                        </Dialog>
+                        <div className={"w-full flex flex-col sm:flex-row justify-end gap-3 sm:gap-2"}>
+                            <Button
+                                variant="outline"
+                                type="button"
+                                className="w-full sm:w-auto"
+                                onClick={() => setDialogOpen(false)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                className="w-full sm:w-auto"
+                            >
+                                Save changes
+                            </Button>
+                        </div>
                     </Field>
                 </form>
             </AlertDialogContent>

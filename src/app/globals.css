@@ -42,6 +42,7 @@
 }
 
 :root {
+    --body-background: var(--color-stone-100);
     --radius: 0.65rem;
     --background: oklch(1 0 0);
     --foreground: oklch(0.141 0.005 285.823);
@@ -77,6 +78,7 @@
 }
 
 .dark {
+    --body-background: var(--color-stone-900);
     --background: oklch(0.141 0.005 285.823);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.21 0.006 285.885);
@@ -131,12 +133,12 @@ body::-webkit-scrollbar {
 }
 
 body {
-    background-color: var(--color-stone-100);
+    background-color: var(--body-background);
 }
 
 .home-title {
     width: min(100vw, 500px);
-    margin-top: min(20vw, 80px);
+    margin-top: min(10vw, 50px);
     padding: 0 30px 15px;
 }
 
@@ -145,7 +147,7 @@ body {
     padding: 0 30px 15px;
 }
 
-.add-item-dialog {
+.item-dialog {
     width: min(90vw, 900px);
     max-width: 900px;
 }

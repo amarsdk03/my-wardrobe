@@ -26,7 +26,7 @@ export default function FiltersAccordion(
         >
             <AccordionItem value="filters">
                 <AccordionContent>
-                    <div className={"rounded-md border-stone-200 opacity-80 text-stone-600 border-2 p-2 text-center"}>
+                    <div className={"rounded-md opacity-80 border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 border-2 p-2 text-center"}>
                         Filters coming soon...
                     </div>
                 </AccordionContent>
