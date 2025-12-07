@@ -1,41 +1,51 @@
 import { create } from "zustand";
 
-import webData, {userInfo, userSettings} from "@/types/web-data";
-import Item from "@/types/wardrobe-data";
+import webData, {wardrobeInfo, userSettings} from "@/types/web-data";
+import Item, {Category, defaultCategoryNames, userWardrobe} from "@/types/wardrobe-data";
 
 export type webDataStore = {
     formData: webData;
 
     updateUserSettings: (settings: Partial<userSettings>) => void;
-    updateUserInfo: (info: Partial<userInfo>) => void;
+    updateWardrobeInfo: (info: Partial<wardrobeInfo>) => void;
 
     loadWardrobe: () => void;
-    importWardrobe: (wardrobe: webData) => void;
+    importWardrobe: (wardrobe: userWardrobe) => void;
     exportWardrobe: () => webData;
+
+    addNewCategory: (category: Category) => void;
+    renameCategory: (category: Category) => void;
+    deleteCategory: (id: string) => void;
 
     addNewItemToWardrobe: (item: Item) => void;
     updateItemInWardrobe: (item: Item) => void;
-    deleteItemFromWardrobe: (index: string) => void;
+    deleteItemFromWardrobe: (id: string) => void;
 }
 
 const STORAGE_KEY = "digital-wardrobe-data";
 
 const defaultWebData: webData = {
     userSettings: {
-        language: { code: "en", name: "English" },
         gridSize: "S",
-        gridType: "none",
         darkMode: false,
-        showItemNames: false,
-        showItemCategories: false,
-        showItemPrices: false,
-        showItemCondition: false,
     },
-    userInfo: {
-        firstAccess: new Date(),
-        lastAccess: new Date(),
+    wardrobeInfo: {
+        createdAt: new Date(),
+        lastUpdatedAt: new Date(),
     },
-    wardrobe: [],
+    userWardrobe: {
+        categories: [
+            ...defaultCategoryNames.map(name => ({
+                id: crypto.randomUUID(),
+                name: name,
+            })),
+            {
+                id: crypto.randomUUID(),
+                name: "Others",
+            }
+        ],
+        wardrobe: [],
+    },
 };
 
 const loadFromLocalStorage = (): webData => {
@@ -46,8 +56,8 @@ const loadFromLocalStorage = (): webData => {
 
         if (stored) {
             const parsed = JSON.parse(stored);
-            parsed.userInfo.firstAccess = new Date(parsed.userInfo.firstAccess);
-            parsed.userInfo.lastAccess = new Date(parsed.userInfo.lastAccess);
+            parsed.wardrobeInfo.createdAt = new Date(parsed.wardrobeInfo.createdAt);
+            parsed.wardrobeInfo.lastUpdatedAt = new Date(parsed.wardrobeInfo.lastUpdatedAt);
             return parsed;
         }
     } catch (error) {
@@ -83,12 +93,12 @@ export const useWebDataStore = create<webDataStore>()((set, get) => ({
             return { formData: newData };
         }),
 
-    updateUserInfo: (info) =>
+    updateWardrobeInfo: (info) =>
         set((state) => {
             const newData = {
                 ...state.formData,
-                userInfo: {
-                    ...state.formData.userInfo,
+                wardrobeInfo: {
+                    ...state.formData.wardrobeInfo,
                     ...info,
                     lastAccess: new Date(),
                 },
@@ -104,12 +114,13 @@ export const useWebDataStore = create<webDataStore>()((set, get) => ({
         }),
 
     importWardrobe: (wardrobe) =>
-        set(() => {
-            const newData = {
-                ...wardrobe,
-                userInfo: {
-                    ...wardrobe.userInfo,
-                    lastAccess: new Date(),
+        set((state) => {
+            const newData: webData = {
+                userWardrobe: wardrobe,
+                userSettings: state.formData.userSettings,
+                wardrobeInfo: {
+                    createdAt: state.formData.wardrobeInfo.createdAt,
+                    lastUpdatedAt: new Date(),
                 },
             };
             saveToLocalStorage(newData);
@@ -120,11 +131,80 @@ export const useWebDataStore = create<webDataStore>()((set, get) => ({
         return get().formData;
     },
 
+    addNewCategory: (category) =>
+        set((state) => {
+            // Check if category name already exists
+            const categoryExists = state.formData.userWardrobe.categories.some(
+                cat => cat.name.toLowerCase() === category.name.toLowerCase()
+            );
+
+            if (categoryExists) {
+                console.warn(`Category "${category.name}" already exists`);
+                return state; // Return unchanged state
+            }
+
+            const newData = {
+                ...state.formData,
+                userWardrobe: {
+                    ...state.formData.userWardrobe,
+                    categories: [
+                        ...state.formData.userWardrobe.categories,
+                        category
+                    ]
+                }
+            };
+            saveToLocalStorage(newData);
+            return { formData: newData };
+        }),
+
+    renameCategory: (category) =>
+        set((state) => {
+            // Check if the new name already exists in another category
+            const nameExistsInOther = state.formData.userWardrobe.categories.some(
+                cat => cat.id !== category.id && cat.name.toLowerCase() === category.name.toLowerCase()
+            );
+
+            if (nameExistsInOther) {
+                console.warn(`Category name "${category.name}" already exists`);
+                return state; // Return unchanged state
+            }
+
+            const newCategories = state.formData.userWardrobe.categories.map(cat =>
+                cat.id === category.id ? category : cat
+            );
+            const newData = {
+                ...state.formData,
+                userWardrobe: {
+                    ...state.formData.userWardrobe,
+                    categories: newCategories
+                }
+            };
+            saveToLocalStorage(newData);
+            return { formData: newData };
+        }),
+
+    deleteCategory: (id) =>
+        set((state) => {
+            const newCategories = state.formData.userWardrobe.categories.filter(cat => cat.id !== id);
+            const newData = {
+                ...state.formData,
+                userWardrobe: {
+                    ...state.formData.userWardrobe,
+                    categories: newCategories
+                }
+            };
+            saveToLocalStorage(newData);
+            return { formData: newData };
+        }),
+
     addNewItemToWardrobe: (item) =>
         set((state) => {
             const newData = {
                 ...state.formData,
-                wardrobe: [...state.formData.wardrobe, item],
+                userWardrobe: {
+                    ...state.formData.userWardrobe,
+                    wardrobe: [...state.formData.userWardrobe.wardrobe, item]
+                }
             };
             saveToLocalStorage(newData);
             return { formData: newData };
@@ -132,12 +212,15 @@ export const useWebDataStore = create<webDataStore>()((set, get) => ({
 
     updateItemInWardrobe: (item) =>
         set((state) => {
-            const newWardrobe = state.formData.wardrobe.map((wardrobeItem) =>
+            const newWardrobe = state.formData.userWardrobe.wardrobe.map((wardrobeItem) =>
                 wardrobeItem.id === item.id ? { ...item } : wardrobeItem
             );
             const newData = {
                 ...state.formData,
-                wardrobe: newWardrobe,
+                userWardrobe: {
+                    ...state.formData.userWardrobe,
+                    wardrobe: newWardrobe,
+                }
             };
             saveToLocalStorage(newData);
             return { formData: newData };
@@ -145,10 +228,13 @@ export const useWebDataStore = create<webDataStore>()((set, get) => ({
 
     deleteItemFromWardrobe: (id) =>
         set((state) => {
-            const newWardrobe = state.formData.wardrobe.filter((item) => item.id !== id);
+            const newWardrobe = state.formData.userWardrobe.wardrobe.filter((item) => item.id !== id);
             const newData = {
                 ...state.formData,
-                wardrobe: newWardrobe,
+                userWardrobe: {
+                    ...state.formData.userWardrobe,
+                    wardrobe: newWardrobe,
+                }
             };
             saveToLocalStorage(newData);
             return { formData: newData };

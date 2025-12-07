@@ -1,47 +1,22 @@
 import React from "react";
-import {CheckIcon, PlusIcon} from "lucide-react";
+import {PlusIcon} from "lucide-react";
 
 import Item, {
-    CATEGORIES,
-    categoryTypes,
-    CONDITIONS,
     conditionTypes,
-    NECESSITY,
     necessityTypes
 } from "@/types/wardrobe-data";
 import { useWebDataStore } from "@/stores/web-data-store";
 
 import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-
-import {
-    Field,
-    FieldDescription,
-    FieldGroup,
-    FieldLabel, FieldLegend,
-    FieldSeparator,
-    FieldSet,
-} from "@/components/ui/field";
-
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group";
+import ItemFormFields from "@/features/items/components/ItemFormFields";
 
 export default function AddItemDialog() {
     const { addNewItemToWardrobe } = useWebDataStore();
@@ -50,7 +25,7 @@ export default function AddItemDialog() {
 
     const [itemTitle, setItemTitle] = React.useState("");
     const [itemImageUrl, setItemImageUrl] = React.useState("");
-    const [itemCategory, setItemCategory] = React.useState<categoryTypes[]>(["Others"]);
+    const [itemCategory, setItemCategory] = React.useState<string[]>(["Others"]);
     const [itemPrice, setItemPrice] = React.useState("");
     const [itemCondition, setItemCondition] = React.useState("New");
     const [itemNecessity, setItemNecessity] = React.useState("5");
@@ -77,224 +52,43 @@ export default function AddItemDialog() {
     };
 
     return (
-        <AlertDialog
+        <Dialog
             open={dialogOpen}
             onOpenChange={setDialogOpen}
         >
-            <AlertDialogTrigger asChild>
+            <DialogTrigger asChild>
                 <Button size="icon">
                     <PlusIcon />
                 </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className={"item-dialog"} aria-describedby={"add-item-dialog"}>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>
+            </DialogTrigger>
+            <DialogContent className={"item-dialog"} aria-describedby={"add-item-dialog"}>
+                <DialogHeader>
+                    <DialogTitle>
                         Add new item
-                    </AlertDialogTitle>
-                </AlertDialogHeader>
-                <form onSubmit={handleSubmit}>
-                    <div className={"grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4"}>
-                        <div className={"aspect-square hidden sm:block max-h-[400px]"}>
-                            {itemImageUrl ? (
-                                /* eslint-disable-next-line @next/next/no-img-element */
-                                <img
-                                    src={itemImageUrl}
-                                    alt="Item preview"
-                                    className="w-full h-full rounded-lg object-scale-down"
-                                />
-                            ) : (
-                                <div className={"bg-stone-100 rounded-2xl flex items-center justify-center w-full h-full text-stone-500"}>
-                                    Item preview here
-                                </div>
-                            )}
-                        </div>
-                        <ScrollArea className="max-h-[400px] overflow-hidden">
-                            <FieldGroup className={"ps-2 pe-6"}>
-                                <FieldSet className={"gap-4"}>
-                                    <FieldLegend>
-                                        Required info
-                                    </FieldLegend>
-                                    <FieldDescription>
-                                        The following fields are required to add a new item to your wardrobe.
-                                    </FieldDescription>
-                                    <FieldGroup className={"gap-5"}>
-                                        <Field className={"gap-2"}>
-                                            <FieldLabel htmlFor="name">
-                                                Item title
-                                            </FieldLabel>
-                                            <Input
-                                                id="name"
-                                                placeholder="Nike Air Force 1 - White"
-                                                value={itemTitle}
-                                                onChange={(e) => setItemTitle(e.target.value)}
-                                                required
-                                            />
-                                        </Field>
-                                        <Field className={"gap-2"}>
-                                            <FieldLabel htmlFor="main-image">
-                                                Image preview URL
-                                            </FieldLabel>
-                                            <Input
-                                                type="url"
-                                                id="main-image"
-                                                placeholder={"https://product-website/images/air-force-1.png"}
-                                                value={itemImageUrl}
-                                                onChange={(e) => setItemImageUrl(e.target.value)}
-                                            />
-                                            <FieldDescription className={"text-xs mt-0 pt-0"}>
-                                                Ensure you use images with permission from the source owner.
-                                            </FieldDescription>
-                                        </Field>
-                                        <Field className={"gap-2"}>
-                                            <FieldLabel htmlFor="category">
-                                                Select categories
-                                            </FieldLabel>
-                                            <ToggleGroup
-                                                type="multiple"
-                                                variant="outline"
-                                                spacing={1}
-                                                size="sm"
-                                                className={"flex flex-wrap gap-2"}
-                                                value={itemCategory}
-                                                onValueChange={(value: string[]) => setItemCategory(value as categoryTypes[])}
-                                            >
-                                                {
-                                                    CATEGORIES.map((category, index) => {
-                                                        return (
-                                                            <ToggleGroupItem
-                                                                key={index}
-                                                                value={category}
-                                                                aria-label={"Toggle " + category + " bookmark"}
-                                                                className="data-[state=off]:bg-stone-200 dark:data-[state=off]:bg-stone-900 data-[state=on]:bg-lime-100 dark:data-[state=on]:bg-lime-500 dark:data-[state=on]:text-lime-950 data-[state=off]:*:[svg]:hidden data-[state=on]:*:[svg]:block"
-                                                            >
-                                                                <CheckIcon className={"stroke-lime-500 dark:stroke-lime-800"} />
-                                                                { category }
-                                                            </ToggleGroupItem>
-                                                        )
-                                                    })
-                                                }
-                                            </ToggleGroup>
-                                        </Field>
-                                    </FieldGroup>
-                                </FieldSet>
-                                <FieldSeparator />
-                                <FieldSet className={"gap-4"}>
-                                    <FieldLegend>
-                                        Additional info
-                                    </FieldLegend>
-                                    <FieldDescription>
-                                        The following fields are optional, but useful to keep your wardrobe more organized.
-                                    </FieldDescription>
-                                    <FieldGroup className={"gap-5"}>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            <Field className={"gap-2"}>
-                                                <FieldLabel htmlFor="price">
-                                                    Item price
-                                                </FieldLabel>
-                                                <Input
-                                                    id="price"
-                                                    placeholder="109,99€"
-                                                    type="number"
-                                                    step="0.01"
-                                                    min="0"
-                                                    value={itemPrice}
-                                                    onChange={(e) => setItemPrice(e.target.value)}
-                                                />
-                                            </Field>
-                                            <Field className={"gap-2"}>
-                                                <FieldLabel htmlFor="conditions">
-                                                    Item condition
-                                                </FieldLabel>
-                                                <Select
-                                                    value={itemCondition}
-                                                    onValueChange={setItemCondition}
-                                                >
-                                                    <SelectTrigger id="conditions">
-                                                        <SelectValue placeholder="Select a condition" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {
-                                                            CONDITIONS.map((condition) => (
-                                                                <SelectItem key={condition} value={condition}>
-                                                                    {condition}
-                                                                </SelectItem>
-                                                            ))
-                                                        }
-                                                    </SelectContent>
-                                                </Select>
-                                            </Field>
-                                        </div>
-                                        <Field className={"gap-2"}>
-                                            <FieldLabel htmlFor="necessity">
-                                                Necessity
-                                            </FieldLabel>
-                                            <Select
-                                                value={itemNecessity}
-                                                onValueChange={setItemNecessity}
-                                            >
-                                                <SelectTrigger id="necessity">
-                                                    <SelectValue placeholder="Select a necessity level" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {
-                                                        NECESSITY.map((necessity) => (
-                                                            <SelectItem key={necessity} value={necessity.toString()}>
-                                                                {
-                                                                    "⭐".repeat(necessity)
-                                                                }
-                                                            </SelectItem>
-                                                        ))
-                                                    }
-                                                </SelectContent>
-                                            </Select>
-                                        </Field>
-                                        <Field className={"gap-2"}>
-                                            <FieldLabel htmlFor="info">
-                                                Additional info
-                                            </FieldLabel>
-                                            <Textarea
-                                                id="info"
-                                                placeholder="Notes, tags, considerations..."
-                                                value={itemInfo}
-                                                onChange={(e) => setItemInfo(e.target.value)}
-                                            />
-                                        </Field>
-                                    </FieldGroup>
-                                    <FieldGroup className={"mt-2 mb-8"}>
-                                        <Field orientation="horizontal">
-                                            <Switch
-                                                id="wishlist"
-                                                checked={wishlist}
-                                                onCheckedChange={setWishlist}
-                                            />
-                                            <FieldLabel
-                                                htmlFor="wishlist"
-                                                className="font-normal"
-                                            >
-                                                Add to Wishlist
-                                            </FieldLabel>
-                                        </Field>
-                                    </FieldGroup>
-                                </FieldSet>
-                            </FieldGroup>
-                        </ScrollArea>
-                    </div>
-                    <Field orientation="horizontal" className={"justify-end mt-4"}>
-                        <Button
-                            variant="outline"
-                            type="button"
-                            onClick={() => setDialogOpen(false)}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            type="submit"
-                        >
-                            Submit
-                        </Button>
-                    </Field>
-                </form>
-            </AlertDialogContent>
-        </AlertDialog>
+                    </DialogTitle>
+                </DialogHeader>
+                <ItemFormFields
+                    mode={"add"}
+                    handleSubmit={handleSubmit}
+                    itemTitle={itemTitle}
+                    setItemTitle={setItemTitle}
+                    itemImageUrl={itemImageUrl}
+                    setItemImageUrl={setItemImageUrl}
+                    itemCategory={itemCategory}
+                    setItemCategory={setItemCategory}
+                    itemPrice={itemPrice}
+                    setItemPrice={setItemPrice}
+                    itemCondition={itemCondition}
+                    setItemCondition={setItemCondition}
+                    itemNecessity={itemNecessity}
+                    setItemNecessity={setItemNecessity}
+                    itemInfo={itemInfo}
+                    setItemInfo={setItemInfo}
+                    wishlist={wishlist}
+                    setWishlist={setWishlist}
+                    setDialogOpen={setDialogOpen}
+                />
+            </DialogContent>
+        </Dialog>
     )
 }

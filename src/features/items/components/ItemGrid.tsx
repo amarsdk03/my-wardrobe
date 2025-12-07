@@ -60,7 +60,7 @@ export default function ItemGrid(
         );
     }
 
-    const filteredWardrobe = formData.wardrobe.filter(item => {
+    const filteredWardrobe = formData.userWardrobe.wardrobe.filter(item => {
         // Search filter
         if (searchQuery) {
             const searchLower = searchQuery.toLowerCase();
@@ -90,7 +90,7 @@ export default function ItemGrid(
         return true;
     });
 
-    if (formData.wardrobe.length === 0) {
+    if (formData.userWardrobe.wardrobe.length === 0) {
         return (
             <div className="mt-18">
                 <p className="text-2xl text-stone-500 dark:text-stone-400 text-center font-medium">
@@ -117,7 +117,7 @@ export default function ItemGrid(
             <div className={cn("grid", gridSizeClass, gridGapClass)}>
                 {
                     filteredWardrobe.map((item) =>
-                        <EditItemDialog key={item.id} item={item} />
+                        <EditItemDialog key={item.id} item={item} gridSize={gridSize} />
                     )
                 }
             </div>

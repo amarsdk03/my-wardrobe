@@ -1,34 +1,19 @@
-import Item from "@/types/wardrobe-data";
+import {userWardrobe} from "@/types/wardrobe-data";
 
 export default interface webData {
     userSettings: userSettings;
-    userInfo: userInfo;
-    wardrobe: Item[];
+    wardrobeInfo: wardrobeInfo;
+    userWardrobe: userWardrobe;
 }
 
-export interface userInfo {
-    firstAccess: Date;
-    lastAccess: Date;
+export interface wardrobeInfo {
+    createdAt: Date;
+    lastUpdatedAt: Date;
 }
 
 export interface userSettings {
-    language: Language;
     gridSize: gridSize;
-    gridType: gridType;
     darkMode: boolean;
-    showItemNames: boolean;
-    showItemCategories: boolean;
-    showItemPrices: boolean;
-    showItemCondition: boolean;
 }
 
-type Language = {
-    code: "en",
-    name: "English"
-} | {
-    code: "it",
-    name: "Italian"
-};
-
 export type gridSize = "S" | "M" | "L";
-export type gridType = "none" | "dashed" | "solid";
