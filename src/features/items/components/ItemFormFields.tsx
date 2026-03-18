@@ -2,7 +2,7 @@ import React, {Dispatch, FormEvent, SetStateAction, useState} from "react";
 
 import {useWebDataStore} from "@/stores/web-data-store";
 import {CONDITIONS, NECESSITY} from "@/types/wardrobe-data";
-import {CheckIcon, RotateCcwIcon, ShirtIcon, SquarePenIcon, Trash2Icon} from "lucide-react";
+import {CheckIcon, ClipboardPasteIcon, CopyIcon, RotateCcwIcon, ShirtIcon, SquarePenIcon, Trash2Icon} from "lucide-react";
 
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {
@@ -28,6 +28,8 @@ import {Switch} from "@/components/ui/switch";
 import {Textarea} from "@/components/ui/textarea";
 import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupButton } from "@/components/ui/input-group";
+import { Separator } from "@/components/ui/separator";
 
 export default function ItemFormFields(
     {
@@ -50,6 +52,7 @@ export default function ItemFormFields(
         wishlist,
         setWishlist,
         setDialogOpen,
+        handleDuplication,
         handleDeleteItem,
     } : {
         mode: "add" | "edit",
@@ -71,6 +74,7 @@ export default function ItemFormFields(
         wishlist: boolean,
         setWishlist: Dispatch<SetStateAction<boolean>>,
         setDialogOpen: Dispatch<SetStateAction<boolean>>,
+        handleDuplication?: (e: FormEvent) => void,
         handleDeleteItem?: () => void,
     }
 ) {
@@ -140,18 +144,36 @@ export default function ItemFormFields(
                                     <FieldLabel htmlFor="main-image">
                                         Image preview URL:
                                     </FieldLabel>
-                                    <Input
-                                        type="url"
-                                        id="main-image"
-                                        placeholder={"https://product-website/images/air-force-1.png"}
-                                        value={itemImageUrl}
-                                        onChange={
-                                            (e) => {
-                                                setItemImageUrl(e.target.value);
-                                                setBrokenImageUrl(false);
+                                    <InputGroup>
+                                        <InputGroupInput
+                                            type="url"
+                                            id="main-image"
+                                            placeholder={"https://product-website/images/air-force-1.png"}
+                                            value={itemImageUrl}
+                                            onChange={
+                                                (e) => {
+                                                    setItemImageUrl(e.target.value);
+                                                    setBrokenImageUrl(false);
+                                                }
                                             }
-                                        }
-                                    />
+                                        />
+                                        <InputGroupAddon align="inline-end">
+                                            <InputGroupButton 
+                                                variant="secondary"
+                                                onClick={async () => {
+                                                    try {
+                                                        const text = await navigator.clipboard.readText();
+                                                        setItemImageUrl(text);
+                                                        setBrokenImageUrl(false);
+                                                    } catch (err) {
+                                                        console.error("Failed to paste from clipboard:", err);
+                                                    }
+                                                }}
+                                            >
+                                                <ClipboardPasteIcon />
+                                            </InputGroupButton>
+                                        </InputGroupAddon>
+                                    </InputGroup>
                                     <FieldDescription className={"text-xs mt-0 pt-0"}>
                                         Ensure you use images with permission from the source owner.
                                     </FieldDescription>
@@ -189,7 +211,7 @@ export default function ItemFormFields(
                             </FieldGroup>
                         </FieldSet>
                         <FieldSeparator />
-                        <FieldSet className={"gap-4 mb-8"}>
+                        <FieldSet className={"gap-4"}>
                             <FieldLegend>
                                 Additional info
                             </FieldLegend>
@@ -290,18 +312,21 @@ export default function ItemFormFields(
                     </FieldGroup>
                 </ScrollArea>
             </div>
+            <Separator />
             {
                 mode === "add" ? (
                     <Field orientation="horizontal" className={"flex flex-col sm:flex-row justify-between mt-4 gap-2"}>
-                        <Button
-                            variant="outline"
-                            type="reset"
-                            onClick={() => resetFields()}
-                        >
-                            <RotateCcwIcon className={"mb-0.25"} />
-                            Reset fields
-                        </Button>
-                        <div className={"w-full flex flex-col sm:flex-row justify-end gap-3 sm:gap-2"}>
+                        <div className={"w-full flex flex-col sm:flex-row"}>
+                            <Button
+                                variant="outline"
+                                type="reset"
+                                onClick={() => resetFields()}
+                            >
+                                <RotateCcwIcon className={"mb-0.25"} />
+                                Reset fields
+                            </Button>
+                        </div>
+                        <div className={"w-full flex flex-col-reverse sm:flex-row justify-end gap-2"}>
                             <Button
                                 variant="outline"
                                 type="button"
@@ -319,37 +344,72 @@ export default function ItemFormFields(
                     </Field>
                 ) : (
                     <Field orientation="horizontal" className={"flex flex-col sm:flex-row justify-between mt-4 gap-2"}>
-                        <Dialog>
-                            <DialogTrigger asChild>
+                        <div className={"w-full flex flex-row-reverse sm:flex-row justify-end gap-1 sm:gap-2"}>
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button
+                                        variant="destructive"
+                                        type="button"
+                                    >
+                                        <Trash2Icon />
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>
+                                            Are you absolutely sure?
+                                        </DialogTitle>
+                                        <DialogDescription>
+                                            This action cannot be undone!
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <Button
+                                        variant="destructive"
+                                        type="button"
+                                        onClick={handleDeleteItem}
+                                    >
+                                        <Trash2Icon />
+                                        Confirm deletion
+                                    </Button>
+                                </DialogContent>
+                            </Dialog>
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        type="button"
+                                    >
+                                        <CopyIcon />
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>
+                                            Do you want to duplicate the item?
+                                        </DialogTitle>
+                                    </DialogHeader>
+                                    <Button
+                                        variant="outline"
+                                        type="button"
+                                        onClick={handleDuplication}
+                                    >
+                                        <CopyIcon />
+                                        Confirm duplication
+                                    </Button>
+                                </DialogContent>
+                            </Dialog>
+                            <div className={"w-full flex flex-col sm:flex-row"}>
                                 <Button
-                                    variant="destructive"
-                                    type="button"
-                                    className="w-full sm:w-auto"
+                                    variant="outline"
+                                    type="reset"
+                                    onClick={() => resetFields()}
                                 >
-                                    <Trash2Icon />
-                                    Delete item
+                                    <RotateCcwIcon className={"mb-0.25"} />
+                                    Reset fields
                                 </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>
-                                        Are you absolutely sure?
-                                    </DialogTitle>
-                                    <DialogDescription>
-                                        This action cannot be undone!
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <Button
-                                    variant="destructive"
-                                    type="button"
-                                    onClick={handleDeleteItem}
-                                >
-                                    <Trash2Icon />
-                                    Confirm deletion
-                                </Button>
-                            </DialogContent>
-                        </Dialog>
-                        <div className={"w-full flex flex-col sm:flex-row justify-end gap-3 sm:gap-2"}>
+                            </div>
+                        </div>
+                        <div className={"w-full flex flex-col-reverse sm:flex-row justify-end gap-2"}>
                             <Button
                                 variant="outline"
                                 type="button"

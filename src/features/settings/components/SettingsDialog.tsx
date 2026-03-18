@@ -66,7 +66,7 @@ export default function SettingsDialog() {
                             Settings & info
                         </AlertDialogTitle>
                     </AlertDialogHeader>
-                    <ScrollArea className="max-h-[75vh]">
+                    <ScrollArea className="max-h-[65vh]">
                         <div className="px-8">
                             <div className={"grid grid-cols-1 gap-6 mb-4"}>
                                 <div>

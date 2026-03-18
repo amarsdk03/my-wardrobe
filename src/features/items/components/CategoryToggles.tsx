@@ -1,7 +1,7 @@
 import {useSyncExternalStore} from "react";
 
 import {useWebDataStore} from "@/stores/web-data-store";
-import {LayoutGridIcon, SlidersHorizontalIcon, StarIcon, StarOffIcon} from "lucide-react";
+import {LayoutGridIcon, StarIcon, StarOffIcon, TagIcon} from "lucide-react";
 import {cn} from "@/lib/utils";
 
 import {
@@ -151,7 +151,7 @@ export default function CategoryToggles(
                                 aria-label={"Toggle " + category.name}
                                 className="toggle-hover-effect data-[state=off]:*:[svg]:hidden data-[state=on]:*:[svg]:block"
                             >
-                                <SlidersHorizontalIcon className={"stroke-stone-500 dark:stroke-stone-300"} />
+                                <TagIcon className={"stroke-stone-500 dark:stroke-stone-300"} />
                                 { category.name }
                             </ToggleGroupItem>
                         )

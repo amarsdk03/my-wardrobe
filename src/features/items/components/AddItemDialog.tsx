@@ -1,5 +1,6 @@
 import React from "react";
 import {PlusIcon} from "lucide-react";
+import { v4 as uuidv4 } from 'uuid';
 
 import Item, {
     conditionTypes,
@@ -36,7 +37,7 @@ export default function AddItemDialog() {
         e.preventDefault();
 
         const newItem: Item = {
-            id: crypto.randomUUID(),
+            id: uuidv4(),
             name: itemTitle,
             images: itemImageUrl ? [itemImageUrl] : [],
             info: itemInfo,

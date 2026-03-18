@@ -30,11 +30,11 @@ export default function ItemGrid(
     let skeletonItems: number;
 
     if (gridSize === "S") {
-        gridSizeClass = "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-8";
+        gridSizeClass = "grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-8";
         gridGapClass = "gap-2";
         skeletonItems = 24;
     } else if (gridSize === "M") {
-        gridSizeClass = "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6";
+        gridSizeClass = "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6";
         gridGapClass = "gap-3";
         skeletonItems = 12;
     } else {

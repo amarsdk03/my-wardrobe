@@ -46,7 +46,7 @@ export default function ItemPreview(
                             referrerPolicy="no-referrer"
                             className="w-full h-full object-scale-down transition-transform duration-300 text-black group-hover:-translate-y-1"
                         />
-                        <div className={cn(itemNamePadding, "absolute bottom-0 left-0 right-0 text-center text-stone-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-stone-200 to-white")}>
+                        <div className={cn(itemNamePadding, "absolute bottom-0 left-0 right-0 text-center text-stone-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-t from-stone-200 to-white")}>
                             {item.name}
                         </div>
                         {

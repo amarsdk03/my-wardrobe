@@ -1,4 +1,5 @@
 import React from "react";
+import { v4 as uuidv4 } from 'uuid';
 
 import { useWebDataStore } from "@/stores/web-data-store";
 import { gridSize } from "@/types/web-data";
@@ -28,7 +29,7 @@ export default function EditItemDialog(
         gridSize: gridSize,
     }
 ) {
-    const { updateItemInWardrobe, deleteItemFromWardrobe } = useWebDataStore();
+    const { updateItemInWardrobe, addNewItemToWardrobe, deleteItemFromWardrobe } = useWebDataStore();
 
     const [dialogOpen, setDialogOpen] = React.useState(false);
 
@@ -59,6 +60,25 @@ export default function EditItemDialog(
         updateItemInWardrobe(updatedItem);
         setDialogOpen(false);
     }
+    
+    const handleDuplication = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const newItem: Item = {
+            id: uuidv4(),
+            name: itemTitle,
+            images: itemImageUrl ? [itemImageUrl] : [],
+            info: itemInfo,
+            wishlist: wishlist,
+            category: itemCategory,
+            price: itemPrice ? parseFloat(itemPrice) : undefined,
+            condition: itemCondition as conditionTypes || undefined,
+            necessity: itemNecessity.toString() as unknown as necessityTypes || undefined,
+        };
+
+        addNewItemToWardrobe(newItem);
+        setDialogOpen(false);
+    };
 
     function handleDeleteItem() {
         setDialogOpen(false);
@@ -99,6 +119,7 @@ export default function EditItemDialog(
                     wishlist={wishlist}
                     setWishlist={setWishlist}
                     setDialogOpen={setDialogOpen}
+                    handleDuplication={handleDuplication}
                     handleDeleteItem={handleDeleteItem}
                 />
             </AlertDialogContent>

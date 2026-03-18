@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { v4 as uuidv4 } from 'uuid';
 
 import webData, {wardrobeInfo, userSettings} from "@/types/web-data";
 import Item, {Category, defaultCategoryNames, userWardrobe} from "@/types/wardrobe-data";
@@ -36,11 +37,11 @@ const defaultWebData: webData = {
     userWardrobe: {
         categories: [
             ...defaultCategoryNames.map(name => ({
-                id: crypto.randomUUID(),
+                id: uuidv4(),
                 name: name,
             })),
             {
-                id: crypto.randomUUID(),
+                id: uuidv4(),
                 name: "Others",
             }
         ],

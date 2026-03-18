@@ -30,7 +30,7 @@ export default function Home() {
 
     return (
         <>
-            <div className={"w-full min-h-[90vh] px-4 lg:px-16 pb-32"}>
+            <div className={"w-full min-h-[90vh] px-4 lg:px-16 pb-18 sm:pb-32"}>
                 <div className={"flex flex-col items-center justify-center"}>
                     <div className={"home-title"}>
                         <Title />
@@ -55,7 +55,7 @@ export default function Home() {
                         setFilters={setFilters}
                     />
                 </div>
-                <div className={"mt-2 xl:mt-0"}>
+                <div className={"mt-0 sm:mt-2 3xl:mt-0"}>
                     <ItemGrid
                         gridSize={gridSize}
                         filters={filters}
