@@ -9,6 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import EditItemDialog from "@/features/items/components/EditItemDialog";
 
+const WISHLIST_ONLY_FILTER = "wishlistOnly";
+const NON_WISHLIST_ONLY_FILTER = "nonWishlistOnly";
+
 export default function ItemGrid(
     {
         gridSize,
@@ -75,10 +78,15 @@ export default function ItemGrid(
         // Category/wishlist filters
         if (filters.length === 0) return true;
 
-        const wishlistActive = filters.includes("wishlist");
-        if (wishlistActive && !item.wishlist) return false;
+        const wishlistOnlyActive = filters.includes(WISHLIST_ONLY_FILTER);
+        const nonWishlistOnlyActive = filters.includes(NON_WISHLIST_ONLY_FILTER);
 
-        const categoryFilters = filters.filter(f => f !== "wishlist");
+        if (wishlistOnlyActive && !item.wishlist) return false;
+        if (nonWishlistOnlyActive && item.wishlist) return false;
+
+        const categoryFilters = filters.filter(
+            (filter) => filter !== WISHLIST_ONLY_FILTER && filter !== NON_WISHLIST_ONLY_FILTER
+        );
 
         if (categoryFilters.length > 0) {
             const hasMatchingCategory = item.category.some(cat =>
