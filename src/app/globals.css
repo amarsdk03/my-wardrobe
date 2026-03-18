@@ -150,7 +150,7 @@ body {
 
 .home-search {
     width: min(100vw, 500px);
-    padding: 0 min(30px, 3vw) 10px;
+    padding: 0 min(30px, 2vw) min(10px, 0.5vw);
 }
 
 .item-dialog {

@@ -37,16 +37,20 @@ export default function Searchbar(
                         value={searchQuery}
                         onChange={(e) => searchQueryAction(e.target.value)}
                     />
-                    <InputGroupAddon align="inline-end">
-                        <Button
-                            type="reset"
-                            variant="ghost"
-                            size="icon-sm"
-                            onClick={() => searchQueryAction("")}
-                        >
-                            <XIcon />
-                        </Button>
-                    </InputGroupAddon>
+                    {
+                        searchQuery && (
+                            <InputGroupAddon align="inline-end">
+                                <Button
+                                    type="reset"
+                                    variant="ghost"
+                                    size="icon-sm"
+                                    onClick={() => searchQueryAction("")}
+                                >
+                                    <XIcon />
+                                </Button>
+                            </InputGroupAddon>
+                        )
+                    }
                 </InputGroup>
                 <Separator orientation="vertical" className={"mx-1"} />
                 <Button

@@ -158,8 +158,10 @@ export default function ItemFormFields(
                                             }
                                         />
                                         <InputGroupAddon align="inline-end">
-                                            <InputGroupButton 
-                                                variant="secondary"
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon-sm"
                                                 onClick={async () => {
                                                     try {
                                                         const text = await navigator.clipboard.readText();
@@ -171,7 +173,7 @@ export default function ItemFormFields(
                                                 }}
                                             >
                                                 <ClipboardPasteIcon />
-                                            </InputGroupButton>
+                                            </Button>
                                         </InputGroupAddon>
                                     </InputGroup>
                                     <FieldDescription className={"text-xs mt-0 pt-0"}>
