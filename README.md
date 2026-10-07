@@ -17,9 +17,9 @@ So I did what any sane CS student would do: I spent even more time making an ent
 ### Current features
 
 - Add a new clothing item to your wardrobe
-- Modify or delete existing clothing items
-- Add clothing items to a Wishlist
-- Filter clothing items by category
+- Update, duplicate or delete existing clothing items
+- Add any clothing item to a Wishlist
+- Filter clothing items by wishlist status and categories
 - Change some interface aspects (grid size and color theme for now)
 - Export/load your wardrobe data as a JSON file
 
